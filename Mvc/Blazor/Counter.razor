@@ -1,0 +1,16 @@
+﻿<h3>Counter</h3>
+
+<p>
+    Current count: @i
+</p>
+
+<button @onclick="IncrementCounter" class="btn btn-primary">Click Me</button>
+
+@code {
+    int i = 0;
+
+    private void IncrementCounter()
+    {
+        i += 1;
+    }
+}

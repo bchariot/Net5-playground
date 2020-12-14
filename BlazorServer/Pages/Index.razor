@@ -1,0 +1,61 @@
+﻿@page "/"
+@using System.IO
+
+<h1>Hello, worldtest!</h1>
+
+Welcome to your new app.
+
+<p>
+    <InputFile OnChange="@OnInputFileChange" multiple />
+</p>
+
+@for (int i = 0; i < files.Count; i++)
+{
+    <h2>File @(i+1)</h2>
+    <p>
+        @files[i]
+    </p>
+}
+
+<p>
+    <EditForm Model="demo">
+        <InputRadioGroup Name="CarType" @bind-Value="demo.TypeOfCar">
+            Car: <br />
+            @foreach (var c in (CarType[])Enum.GetValues(typeof(CarType)))
+            {
+                <InputRadio Value="c" />
+                @c
+                <br />
+            }
+        </InputRadioGroup>
+        <br />
+        <InputRadioGroup Name="age" @bind-Value="demo.Age">
+            User age:<br />
+            @for (int i = 21; i < 25; i++)
+            {
+                <InputRadio Value="i" />
+                @i
+                <br />
+            }
+        </InputRadioGroup>
+    </EditForm>
+</p>
+
+@code {
+    private DemoModel demo = new();
+    private List<string> files = new();
+
+    private async Task OnInputFileChange(InputFileChangeEventArgs args)
+    {
+        var maxFiles = 2;
+        var maxSize = 2 * 1024 * 1024; //2MB
+
+        foreach (var file in args.GetMultipleFiles(maxFiles))
+        {
+            using var fileStream = file.OpenReadStream(maxAllowedSize: maxSize);
+            using var streamReader = new StreamReader(fileStream);
+            var fileContents = await streamReader.ReadToEndAsync();
+            files.Add(fileContents);
+        }
+    }
+}
